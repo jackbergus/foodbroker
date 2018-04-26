@@ -76,12 +76,33 @@ public class FoodBroker {
             stopWatch.reset();
             stopWatch.start();
 
-            Formatter transactionalDataFormatter = formatterFactory.newInstance(directory);
-            Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, 1);
-            //storeCombiner.add(transactionalDataStore);
-            BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
-            BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,1);
-            runner.run();
+            int availableProcessors = Runtime.getRuntime().availableProcessors()/2;
+            availableProcessors = availableProcessors == 0 ? 1 : availableProcessors;
+            List<Thread> threadList = new ArrayList<>();
+
+            for(int processor = 1; processor <= availableProcessors; processor++){
+                // simulate business process
+                Formatter transactionalDataFormatter = formatterFactory.newInstance(directory);
+                Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, processor);
+                //storeCombiner.add(transactionalDataStore);
+
+                BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
+                BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,availableProcessors );
+
+                // manage threads
+                Thread thread = new Thread(runner);
+                threadList.add(thread);
+                thread.start();
+            }
+
+            for(Thread thread : threadList){
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             stopWatch.stop();
 
             long transactionalDataObjectCount = AbstractDataObject.getInstanceCount() - masterDataObjectCount;
