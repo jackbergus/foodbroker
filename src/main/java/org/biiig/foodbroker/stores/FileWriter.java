@@ -5,10 +5,12 @@ import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.model.DataObject;
 import org.biiig.foodbroker.model.Relationship;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
+/**
+ * Each node/edge having a specific label is written into a distinct file
+ */
 public class FileWriter {
 
     public HashMap<String, ConcurrentBufferedFile> map;
@@ -26,11 +28,6 @@ public class FileWriter {
     private ConcurrentBufferedFile generate(String x, boolean isNode) {
         try {
             return new ConcurrentBufferedFile(formatter.getDirectory()+x+formatter.getFileExtension());
-            /*return new BufferedWriter(
-                    new OutputStreamWriter(
-                            new FileOutputStream((formatter.getDirectory())+x+formatter.getFileExtension()+"_"+thread), Charset.forName("UTF-8")
-                    )
-            );*/
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;

@@ -9,7 +9,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * This concurrent file writing avoids to generating files that have to be merged later on.
  * By using a blocking queue, all the threads put the elements in the queue, while the
- * actual writer will wait for the
+ * actual writer will wait for the messages to be written.
  */
 public class ConcurrentBufferedFile implements Runnable {
     private final BlockingQueue<Optional<String>> queue;
