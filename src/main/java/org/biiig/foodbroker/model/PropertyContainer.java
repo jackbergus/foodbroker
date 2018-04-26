@@ -16,4 +16,7 @@ public interface PropertyContainer {
     public Set<String> getMetaDataKeys();
     public Object getProperty(String key);
     public String getMetaData(String key);
+    default String getLabel() {
+        return getMetaData("label");
+    }
 }

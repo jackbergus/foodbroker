@@ -2,10 +2,7 @@ package org.biiig.foodbroker;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.lang.time.StopWatch;
-import org.biiig.foodbroker.formatter.Formatter;
-import org.biiig.foodbroker.formatter.FormatterFactory;
-import org.biiig.foodbroker.formatter.JSONFormatterFactory;
-import org.biiig.foodbroker.formatter.SQLFormatterFactory;
+import org.biiig.foodbroker.formatter.*;
 import org.biiig.foodbroker.generator.MasterDataGenerator;
 import org.biiig.foodbroker.model.AbstractDataObject;
 import org.biiig.foodbroker.model.AbstractRelationship;
@@ -14,6 +11,7 @@ import org.biiig.foodbroker.simulation.BusinessProcessRunner;
 import org.biiig.foodbroker.simulation.FoodBrokerage;
 import org.biiig.foodbroker.stores.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +40,7 @@ public class FoodBroker {
 
     private static String directory = null;
 
-    private static boolean combine = false;
+    private static boolean combine = true;
 
     /**
      * main method
@@ -62,7 +60,7 @@ public class FoodBroker {
             // generate master data
             Formatter masterDataFormatter = formatterFactory.newInstance(directory);
             Store masterDataStore = storeFactory.newInstance(masterDataFormatter);
-            storeCombiner.add(masterDataStore);
+            //storeCombiner.add(masterDataStore);
 
             MasterDataGenerator masterDataGenerator = new MasterDataGenerator(scaleFactor,masterDataStore);
             masterDataGenerator.generate();
@@ -78,34 +76,12 @@ public class FoodBroker {
             stopWatch.reset();
             stopWatch.start();
 
-            // prepare parallel simulation
-
-            int availableProcessors = Runtime.getRuntime().availableProcessors();
-            List<Thread> threadList = new ArrayList<>();
-
-            for(int processor = 1; processor <= availableProcessors; processor++){
-                // simulate business process
-                Formatter transactionalDataFormatter = formatterFactory.newInstance(directory);
-                Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, processor);
-                storeCombiner.add(transactionalDataStore);
-
-                BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
-                BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,availableProcessors );
-
-                // manage threads
-                Thread thread = new Thread(runner);
-                threadList.add(thread);
-                thread.start();
-            }
-
-            for(Thread thread : threadList){
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            Formatter transactionalDataFormatter = formatterFactory.newInstance(directory);
+            Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, 1);
+            //storeCombiner.add(transactionalDataStore);
+            BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
+            BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,1);
+            runner.run();
             stopWatch.stop();
 
             long transactionalDataObjectCount = AbstractDataObject.getInstanceCount() - masterDataObjectCount;
@@ -121,27 +97,15 @@ public class FoodBroker {
 
             stopWatch.reset();
             stopWatch.start();
-
-            // merge files
-            if(combine){
-                storeCombiner.combine();
-                stopWatch.stop();
-                System.out.println(String.format(
-                  "file combination took %s milliseconds", stopWatch.getTime
-                    ()));
-
-            }
-
         }
     }
 
     private static boolean parseOptions(String[] args) {
         // create and parse options
         Options options = new Options();
-        options.addOption("s", "scale", true, "Set Scale Factor [1..10000]");
+        options.addOption("s", "scale", true, "Set Scale Factor [1.."+Integer.MAX_VALUE+"]");
         options.addOption("o", "output", true, "Choose Output [console, file]");
-        options.addOption("f", "format", true, "Choose Output format [json, sql]");
-        options.addOption("c", "combine", false, "Combine output files");
+        options.addOption("f", "format", true, "Choose Output format [json, sql, csv]");
         options.addOption("d", "directory", true, "Output directory when using file output (default is user home)");
 
         if (args.length == 0) {
@@ -172,13 +136,6 @@ public class FoodBroker {
     }
 
     private static void validateCombine(CommandLine commandLine) {
-        if(commandLine.hasOption("combine") && storeFactory instanceof FileStoreFactory && formatterFactory != null){
-            storeCombiner = new FileStoreCombiner(formatterFactory.newInstance(directory));
-            combine = true;
-        }
-        else {
-            storeCombiner = new DummyStoreCombiner();
-        }
     }
 
     private static void validateStore(CommandLine commandLine) {
@@ -211,6 +168,15 @@ public class FoodBroker {
         } else {
             directory = System.getProperty("user.home");
         }
+        File dirTest = new File(directory);
+        if (dirTest.exists()) {
+            if (dirTest.isFile()) {
+                System.out.println("Cannot delete the following file : " + directory);
+                allOptionsProvidedAndValid = false;
+            }
+        } else {
+            dirTest.mkdirs();
+        }
     }
 
     private static void validateFormat(CommandLine commandLine) {
@@ -222,6 +188,9 @@ public class FoodBroker {
             }
             else if (format.equals("sql")){
                 formatterFactory = new SQLFormatterFactory();
+            }
+            else if (format.equals("csv")) {
+                formatterFactory = new CSVFactory();
             }
             else{
                 System.out.println("Unknown formatter : " + format);
@@ -238,7 +207,7 @@ public class FoodBroker {
         if(commandLine.hasOption("scale")){
             scaleFactor = Integer.parseInt(commandLine.getOptionValue("scale"));
 
-            if (scaleFactor < 1 || scaleFactor > Integer.MAX_VALUE){
+            if (scaleFactor < 1){
                 System.out.println("scale factor out of range 1.."+Integer.MAX_VALUE);
                 allOptionsProvidedAndValid = false;
             }

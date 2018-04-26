@@ -39,8 +39,8 @@ public abstract class AbstractFormatter implements Formatter {
     return getEdgeFilePath() + String.valueOf(thread);
   }
 
-  protected String getDirectory() {
-    return directory;
-
+  @Override
+  public String getDirectory() {
+    return directory+ pathSeparator;
   }
 }

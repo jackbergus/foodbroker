@@ -20,6 +20,7 @@ public interface Formatter {
     String getEdgeFilePath();
     String getNodeFilePath(int thread);
     String getEdgeFilePath(int thread);
+    String getDirectory();
     String getDataFilePath();
     String getNodeOpeningFilePath();
     String getNodeFinishFilePath();
