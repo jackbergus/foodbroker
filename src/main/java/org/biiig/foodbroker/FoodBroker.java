@@ -238,8 +238,8 @@ public class FoodBroker {
         if(commandLine.hasOption("scale")){
             scaleFactor = Integer.parseInt(commandLine.getOptionValue("scale"));
 
-            if (scaleFactor < 1 || scaleFactor > 10000){
-                System.out.println("scale factor out of range 1..10000");
+            if (scaleFactor < 1 || scaleFactor > Integer.MAX_VALUE){
+                System.out.println("scale factor out of range 1.."+Integer.MAX_VALUE);
                 allOptionsProvidedAndValid = false;
             }
         }

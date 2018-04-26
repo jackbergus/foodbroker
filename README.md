@@ -4,7 +4,7 @@
 See http://dbs.uni-leipzig.de/file/foodbroker-wbdb2014.pdf for details.
 
     usage: org.biiig.foodbroker.FoodBroker [-s <arg>] [-o <arg>] [-f <arg>] [-c]
-      -s,--scale <arg>    Set Scale Factor [1..10000]
+      -s,--scale <arg>    Set Scale Factor [1..MAXINT]
       -f,--format <arg>   Choose Output format [json, sql]
       -o,--output <arg>   Choose Output [console, file]
       -c,--combine        Combine output files
