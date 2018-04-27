@@ -52,6 +52,7 @@ public class FoodBrokerConfig implements Serializable {
    */
   public FoodBrokerConfig(String configString) throws JSONException {
     root = new JSONObject(configString);
+    scaleFactor = root.getJSONObject("Process").getInt("scaleFactor");
   }
 
   /**

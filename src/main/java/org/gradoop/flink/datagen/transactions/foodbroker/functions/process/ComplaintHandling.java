@@ -171,7 +171,7 @@ public class ComplaintHandling extends AbstractProcess implements Function<Graph
 
         Vertex ticket = newTicket(
           FoodBrokerPropertyValues.BADQUALITY_TICKET_PROBLEM,
-                (Long) deliveryNote.getPropertyValue(FoodBrokerPropertyKeys.DATE_KEY), graph);
+                serializeDateTime((LocalDate) deliveryNote.getPropertyValue(FoodBrokerPropertyKeys.DATE_KEY)), graph);
 
         graph.getVertices().add(ticket);
 
