@@ -100,5 +100,10 @@
             <artifactId>json</artifactId>
             <version>${dep.json.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-core</artifactId>
+            <version>1.4.2</version>
+        </dependency>
     </dependencies>
 </project>
