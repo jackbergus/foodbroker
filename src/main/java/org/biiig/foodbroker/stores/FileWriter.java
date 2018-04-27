@@ -1,6 +1,6 @@
 package org.biiig.foodbroker.stores;
 
-import org.biiig.foodbroker.concurrent.ConcurrentBufferedFile;
+import org.biiig.foodbroker.concurrent.BufferedFile;
 import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.model.DataObject;
 import org.biiig.foodbroker.model.Relationship;
@@ -13,25 +13,33 @@ import java.util.HashMap;
  */
 public class FileWriter {
 
-    public HashMap<String, ConcurrentBufferedFile> map;
+    public HashMap<String, BufferedFile> map;
     private final Formatter formatter;
     private final String lineSeparator;
     private final int thread;
+    private final boolean multithreaded;
 
-    public FileWriter(Formatter formatter, String lineSeparator, int thread) {
+    public FileWriter(Formatter formatter, String lineSeparator, int thread, boolean multithreaded) {
         this.formatter = formatter;
         this.lineSeparator = lineSeparator;
         this.thread = thread;
         map = new HashMap<>();
+        this.multithreaded = multithreaded;
     }
 
-    private ConcurrentBufferedFile generate(String x, boolean isNode) {
+    private BufferedFile generate(String x, boolean isNode) {
+        String filename = formatter.getDirectory();
+        filename += (multithreaded ? (thread+"") : "") + "_" + x+formatter.getFileExtension();
         try {
-            return new ConcurrentBufferedFile(formatter.getDirectory()+x+formatter.getFileExtension());
+            return new BufferedFile(filename);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getDirectory() {
+        return formatter.getDirectory();
     }
 
     public boolean writeVertex(DataObject object) {
@@ -47,7 +55,7 @@ public class FileWriter {
     }
 
     public void close() {
-        for (ConcurrentBufferedFile w : map.values()) {
+        for (BufferedFile w : map.values()) {
             w.close();
         }
         map.clear();

@@ -2,6 +2,7 @@ package org.biiig.foodbroker.stores;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.biiig.foodbroker.concurrent.BufferedFile;
 import org.biiig.foodbroker.formatter.Formatter;
 
 import java.io.BufferedWriter;
@@ -10,8 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by peet on 28.11.14.
@@ -66,8 +67,39 @@ public class FileStoreCombiner extends AbstractStoreCombiner {
         }
       }
 
+      Set<String> visitedPaths = new HashSet<>();
       for (FileStore fileStore : this.fileStores) {
-        File nodeFile = new File(fileStore.getNodeFilePath());
+        String dir = fileStore.getDirectory();
+        if (visitedPaths.add(dir)) {
+          File d = new File(dir);
+          if (d.isDirectory()) {
+            Map<String, List<String>> map = Arrays
+                    .stream(Objects.requireNonNull(d.listFiles()))
+                    .map(File::getName)
+                    .filter(x -> {
+                      int indexOf = x.indexOf('_');
+                      if (indexOf <= 0) return false;
+                      return x.substring(0, indexOf).matches("\\d+") && !x.substring(indexOf + 1).isEmpty();
+                    })
+                    .collect(Collectors.groupingBy(x -> x.substring(x.indexOf('_') + 1)));
+            Iterator<Map.Entry<String, List<String>>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+              Map.Entry<String, List<String>> curr = it.next();
+              BufferedFile bf = new BufferedFile(new File(d, curr.getKey()).getAbsolutePath());
+              for (String x : curr.getValue()) {
+                File toDelete = new File(d, x);
+                LineIterator lit = FileUtils.lineIterator(toDelete);
+                while (lit.hasNext()) {
+                  bf.write(lit.next());
+                }
+                toDelete.delete();
+              }
+              bf.close();
+            }
+          }
+        }
+
+        /*File nodeFile = new File(fileStore.getNodeFilePath());
         LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
 
         while (nodeIterator.hasNext()) {
@@ -89,7 +121,7 @@ public class FileStoreCombiner extends AbstractStoreCombiner {
         edgeIterator.close();
         if (!edgeFile.delete()) {
           System.err.println("Error while deleting " + edgeFile);
-        }
+        }*/
       }
 
       if (formatter.requiresNodeFinish()) {

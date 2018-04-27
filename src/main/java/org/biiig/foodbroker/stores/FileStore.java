@@ -4,13 +4,10 @@ import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.model.DataObject;
 import org.biiig.foodbroker.model.Relationship;
 
-import java.io.*;
-import java.nio.charset.Charset;
-
 /**
  * Created by peet on 25.11.14.
  */
-public class FileStore extends AbstractStore{
+public class FileStore extends AbstractStore {
 
     //private String nodeFilePath;
     //private BufferedWriter nodeFileWriter;
@@ -19,20 +16,22 @@ public class FileStore extends AbstractStore{
     private int thread;
     private String lineSeparator;
     private FileWriter fs;
+    private final boolean multithreaded;
 
-    public FileStore(Formatter formatter){
-        this(formatter, 0);
+    public FileStore(Formatter formatter, boolean multithreaded){
+        this(formatter, 0, multithreaded);
     }
 
-    public FileStore(Formatter formatter, int thread){
+    public FileStore(Formatter formatter, int thread, boolean multithreaded){
         this.formatter = formatter;
         this.thread = thread;
         this.lineSeparator = System.getProperty("line.separator");
+        this.multithreaded = multithreaded;
     }
 
     @Override
     public void open() {
-        fs = new FileWriter(formatter, lineSeparator, thread);
+        fs = new FileWriter(formatter, lineSeparator, thread, multithreaded);
     }
 
     @Override
@@ -55,11 +54,7 @@ public class FileStore extends AbstractStore{
         fs.close();
     }
 
-    public String getNodeFilePath() {
-        return null;
-    }
-
-    public String getEdgeFilePath() {
-        return null;
+    public String getDirectory() {
+        return fs.getDirectory();
     }
 }

@@ -8,11 +8,11 @@ import org.biiig.foodbroker.formatter.Formatter;
 public class FileStoreFactory extends AbstractStoreFactory{
     @Override
     public Store newInstance(Formatter formatter) {
-        return new FileStore(formatter);
+        return new FileStore(formatter, false);
     }
 
     @Override
     public Store newInstance(Formatter formatter, int thread) {
-        return new FileStore(formatter, thread);
+        return new FileStore(formatter, thread, true);
     }
 }

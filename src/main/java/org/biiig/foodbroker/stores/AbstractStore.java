@@ -7,13 +7,10 @@ import org.biiig.foodbroker.formatter.Formatter;
  */
 public abstract class AbstractStore implements Store {
     protected Formatter formatter;
-
     @Override
     public void open() {}
-
     @Override
     public void close() {}
-
     public Formatter getFormatter() {
         return formatter;
     }

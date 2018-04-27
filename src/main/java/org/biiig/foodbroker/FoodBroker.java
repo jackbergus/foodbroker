@@ -76,7 +76,7 @@ public class FoodBroker {
             stopWatch.reset();
             stopWatch.start();
 
-            int availableProcessors = Runtime.getRuntime().availableProcessors()/2;
+            int availableProcessors = Runtime.getRuntime().availableProcessors();
             availableProcessors = availableProcessors == 0 ? 1 : availableProcessors;
             List<Thread> threadList = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class FoodBroker {
                 // simulate business process
                 Formatter transactionalDataFormatter = formatterFactory.newInstance(directory);
                 Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, processor);
-                //storeCombiner.add(transactionalDataStore);
+                storeCombiner.add(transactionalDataStore);
 
                 BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
                 BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,availableProcessors );
@@ -102,6 +102,16 @@ public class FoodBroker {
                     e.printStackTrace();
                 }
             }
+
+            // merge files
+
+            stopWatch.stop();
+            stopWatch.reset();
+            stopWatch.start();
+            storeCombiner.combine();
+            System.out.println(String.format(
+                    "file combination took %s milliseconds", stopWatch.getTime
+                            ()));
 
             stopWatch.stop();
 
@@ -157,6 +167,9 @@ public class FoodBroker {
     }
 
     private static void validateCombine(CommandLine commandLine) {
+        if (storeFactory instanceof FileStoreFactory && formatterFactory != null) {
+            storeCombiner = new FileStoreCombiner(formatterFactory.newInstance(directory));
+        }
     }
 
     private static void validateStore(CommandLine commandLine) {
