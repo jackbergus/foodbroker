@@ -1,4 +1,4 @@
-package org.gradoop.common.model.impl.id;
+package it.giacomobergami.wrappers;
 
 import java.util.Objects;
 
@@ -6,6 +6,11 @@ public class GradoopId implements Comparable<GradoopId> {
     private final long value;
     public GradoopId(long value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value+"";
     }
 
     @Override

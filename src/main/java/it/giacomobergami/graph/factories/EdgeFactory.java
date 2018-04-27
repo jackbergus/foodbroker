@@ -1,12 +1,10 @@
 package it.giacomobergami.graph.factories;
 
 import it.giacomobergami.graph.Properties;
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
+import it.giacomobergami.wrappers.GradoopId;
+import it.giacomobergami.wrappers.GradoopIdSet;
 import org.gradoop.common.model.impl.pojo.Edge;
-import org.gradoop.common.model.impl.pojo.Vertex;
 
-import java.rmi.UnexpectedException;
 import java.util.function.Supplier;
 
 public class EdgeFactory implements Supplier<Edge> {

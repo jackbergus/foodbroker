@@ -1,7 +1,6 @@
 package org.gradoop.common.model.impl.pojo;
 
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.pojo.GraphHead;
+import it.giacomobergami.wrappers.GradoopId;
 
 import java.util.Set;
 

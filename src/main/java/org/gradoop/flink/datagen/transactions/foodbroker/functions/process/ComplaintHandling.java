@@ -18,8 +18,8 @@ package org.gradoop.flink.datagen.transactions.foodbroker.functions.process;
 import it.giacomobergami.graph.Properties;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
+import it.giacomobergami.wrappers.GradoopId;
+import it.giacomobergami.wrappers.GradoopIdSet;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.GraphTransaction;
 import org.gradoop.common.model.impl.pojo.Vertex;
@@ -106,12 +106,6 @@ public class ComplaintHandling extends AbstractProcess implements Function<Graph
         graph.getVertices().addAll(transactionalVertices);
         graph.getEdges().addAll(transactionalEdges);
         globalSeed++;
-      }
-    }
-
-    for (Edge edge : graph.getEdges()) {
-      if (edge.getGraphIds() == null) {
-        System.out.println(edge);
       }
     }
 

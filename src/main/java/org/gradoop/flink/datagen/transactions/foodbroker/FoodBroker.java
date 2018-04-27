@@ -16,6 +16,7 @@
 package org.gradoop.flink.datagen.transactions.foodbroker;
 
 import it.giacomobergami.init.ExecutionEnvironment;
+import it.giacomobergami.io.NewFileWriter;
 import it.giacomobergami.iterator.StreamableIterator;
 import org.gradoop.common.model.impl.pojo.GraphTransaction;
 import org.gradoop.common.model.impl.pojo.Vertex;
@@ -25,6 +26,7 @@ import org.gradoop.flink.datagen.transactions.foodbroker.functions.process.Broke
 import org.gradoop.flink.datagen.transactions.foodbroker.functions.process.ComplaintHandling;
 import org.gradoop.flink.datagen.transactions.foodbroker.generators.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -102,9 +104,17 @@ public class FoodBroker {
 
   public static void main(String args[]) throws IOException {
     StreamableIterator<GraphTransaction> it = new FoodBroker(FoodBrokerConfig.fromFile("config.json")).execute();
-    while (it.hasNext()) {
-      GraphTransaction x = it.next();
-      System.out.println(x);
+    File f = new File("data/");
+    if (!f.exists()) {
+      f.mkdirs();
+    } else {
+      if (!f.isFile()) {
+        NewFileWriter nfw = new NewFileWriter("data/");
+        while (it.hasNext()) {
+          GraphTransaction x = it.next();
+          nfw.writeGraph(x);
+        }
+      }
     }
   }
 

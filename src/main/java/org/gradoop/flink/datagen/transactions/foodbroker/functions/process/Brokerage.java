@@ -16,8 +16,8 @@
 package org.gradoop.flink.datagen.transactions.foodbroker.functions.process;
 
 import it.giacomobergami.graph.Properties;
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
+import it.giacomobergami.wrappers.GradoopId;
+import it.giacomobergami.wrappers.GradoopIdSet;
 import org.gradoop.common.model.impl.pojo.Edge;
 import org.gradoop.common.model.impl.pojo.GraphTransaction;
 import org.gradoop.common.model.impl.pojo.Vertex;

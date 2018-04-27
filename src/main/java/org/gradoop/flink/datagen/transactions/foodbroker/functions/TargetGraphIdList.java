@@ -18,8 +18,8 @@ package org.gradoop.flink.datagen.transactions.foodbroker.functions;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
+import it.giacomobergami.wrappers.GradoopId;
+import it.giacomobergami.wrappers.GradoopIdSet;
 
 import java.util.Iterator;
 

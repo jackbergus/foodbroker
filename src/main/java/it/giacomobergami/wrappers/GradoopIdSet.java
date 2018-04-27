@@ -1,4 +1,4 @@
-package org.gradoop.common.model.impl.id;
+package it.giacomobergami.wrappers;
 
 import java.util.HashSet;
 

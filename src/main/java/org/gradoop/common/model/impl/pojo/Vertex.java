@@ -1,11 +1,8 @@
 package org.gradoop.common.model.impl.pojo;
 
 import it.giacomobergami.graph.Properties;
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
-
-import java.util.HashMap;
-import java.util.Objects;
+import it.giacomobergami.wrappers.GradoopId;
+import it.giacomobergami.wrappers.GradoopIdSet;
 
 public class Vertex {
     private Properties map;

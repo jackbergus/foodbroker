@@ -1,7 +1,7 @@
 package it.giacomobergami.graph.factories;
 
 import it.giacomobergami.graph.Properties;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
+import it.giacomobergami.wrappers.GradoopIdSet;
 import org.gradoop.common.model.impl.pojo.Vertex;
 
 import java.util.function.Supplier;

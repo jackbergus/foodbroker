@@ -1,7 +1,7 @@
 package org.gradoop.common.model.impl.pojo;
 
-import org.gradoop.common.model.impl.id.GradoopId;
-import org.gradoop.common.model.impl.id.GradoopIdSet;
+import it.giacomobergami.wrappers.GradoopId;
+import it.giacomobergami.wrappers.GradoopIdSet;
 
 public class Edge extends Vertex {
     public final GradoopId src;

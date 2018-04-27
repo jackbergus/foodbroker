@@ -1,6 +1,6 @@
 package it.giacomobergami.graph.factories;
 
-import org.gradoop.common.model.impl.id.GradoopId;
+import it.giacomobergami.wrappers.GradoopId;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;

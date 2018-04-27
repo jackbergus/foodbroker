@@ -64,7 +64,7 @@
     "casesPerScaleFactor" : 1000,
     "startDate" : "2014-01-01",
     "endDate" : "2014-12-31",
-    "scaleFactor" : 10
+    "scaleFactor" : 1000
   },
   "TransactionalData" : {
     "SalesQuotation" : {
