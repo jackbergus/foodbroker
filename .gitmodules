@@ -1,0 +1,3 @@
+[submodule "gradoop"]
+	path = gradoop
+	url = https://github.com/dbs-leipzig/gradoop.git
